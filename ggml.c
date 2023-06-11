@@ -14048,7 +14048,7 @@ void ggml_graph_compute(struct ggml_context * ctx, struct ggml_cgraph * cgraph) 
         /*.has_work  =*/ false,
         /*.stop      =*/ false,
     };
-    struct ggml_compute_state * workers = (ggml_compute_state *)(n_threads > 1 ? alloca(sizeof(struct ggml_compute_state)*(n_threads - 1)) : NULL);
+    struct ggml_compute_state * workers = (struct ggml_compute_state *)(n_threads > 1 ? alloca(sizeof(struct ggml_compute_state)*(n_threads - 1)) : NULL);
 
     // create thread pool
     if (n_threads > 1) {
@@ -15020,7 +15020,7 @@ static enum ggml_opt_result linesearch_backtracking(
         } else {
             // Armijo condition is satisfied
             if (params->lbfgs.linesearch == GGML_LINESEARCH_BACKTRACKING_ARMIJO) {
-                return (ggml_opt_result)(count);
+                return (enum ggml_opt_result)(count);
             }
 
             ggml_vec_dot_f32(nx, &dg, g, d);
@@ -15031,16 +15031,16 @@ static enum ggml_opt_result linesearch_backtracking(
             } else {
                 if(params->lbfgs.linesearch == GGML_LINESEARCH_BACKTRACKING_WOLFE) {
                     // regular Wolfe conditions
-                    return (ggml_opt_result)(count);
+                    return (enum ggml_opt_result)(count);
                 }
 
                 if(dg > -params->lbfgs.wolfe*dginit) {
                     width = dec;
                 } else {
                     // strong Wolfe condition (GGML_LINESEARCH_BACKTRACKING_STRONG_WOLFE)
-                    return (ggml_opt_result)(count);
+                    return (enum ggml_opt_result)(count);
                 }
-                return (ggml_opt_result)(count);
+                return (enum ggml_opt_result)(count);
             }
         }
 
@@ -15111,7 +15111,7 @@ static enum ggml_opt_result ggml_opt_lbfgs(
     ggml_opt_get_params(np, ps, x);
 
     // the L-BFGS memory
-    struct ggml_lbfgs_iteration_data * lm = (ggml_lbfgs_iteration_data *)(alloca(sizeof(struct ggml_lbfgs_iteration_data)*m));
+    struct ggml_lbfgs_iteration_data * lm = (struct ggml_lbfgs_iteration_data *)(alloca(sizeof(struct ggml_lbfgs_iteration_data)*m));
 
     for (int i = 0; i < m; ++i) {
         lm[i].alpha = 0.0f;
@@ -15181,7 +15181,7 @@ static enum ggml_opt_result ggml_opt_lbfgs(
             ggml_vec_cpy_f32(nx, x, xp);
             ggml_vec_cpy_f32(nx, g, gp);
 
-            return (ggml_opt_result)(ls);
+            return (enum ggml_opt_result)(ls);
         }
 
         ggml_vec_norm_f32(nx, &xnorm, x);
